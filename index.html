@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>ES6 Modules</title>
+	<script src="node_modules/traceur/bin/traceur.js"></script>
+	<script src="node_modules/systemjs/dist/system.src.js"></script>
+	<script src="node_modules/es6-module-loader/dist/es6-module-loader-dev.js"></script>
+</head>
+<body>
+	<button id="getText">Get Text</button>
+	<button id="getUsers">Get Users</button>
+	<button id='getPosts'>Get From Website</button>
+	<div id="output"></div>
+<script>
+	// System.import('src/moduleA.js')
+	// System.import('src/Test.js')
+	document.getElementById('getText').addEventListener(
+		'click',getText)
+	document.getElementById('getUsers').addEventListener(
+		'click',getUsers)
+	document.getElementById('getPosts').addEventListener(
+		'click',APIcall)
+	function getText(){
+		fetch('sample.txt')
+		.then((res)=> res.text())
+		.then((data)=> {
+			let output="<h2>This is from sample file</h2>"
+			output+=`<p>${data}</p>`
+			document.getElementById('output').innerHTML+=output;
+		})
+		.catch((err) => console.log(err))
+	}
+	function getUsers(){
+		fetch('users.json')
+		.then(res =>  res.json())
+		.then((data) =>{
+			let output = "<h2>This is from Users.json</h2>"
+			for(let i in data){
+				output += `
+				<ul>
+					<li>${data[i].id}</li>
+
+					<li>${data[i].name}</li>
+
+					<li>${data[i].position}</li>
+				</ul>	
+				`;
+			}
+			document.getElementById('output').innerHTML+=output;
+		})
+		.catch( err =>  console.log(err))
+	}
+	function APIcall(){
+		let url="https://jsonplaceholder.typicode.com/posts"
+		let output=`<h2>API data</h2>`
+		fetch(url)
+		.then(function(res){
+			return res.json()
+		})
+		.then(function(data){
+			for(let i in data){
+				output += `<table style="border:1px solid black;width:100%">
+  					<tr>
+    					<th style="border:1px solid black; background-color:red;">ID</th>
+    					<th style="border:1px solid black;background-color:red;">User ID</th>
+    					<th style="border:1px solid black; background-color:red;">Title</th>
+    					<th style="border:1px solid black;background-color:red;">Post</th>
+  					</tr>
+  					<tr style="border:1px solid black">
+    					<td style="border:1px solid black">${data[i].id}</td>
+    					<td style="border:1px solid black">${data[i].userId}</td>
+    					<td style="border:1px solid black">${data[i].title}</td>
+    					<td style="border:1px solid black">${data[i].body}</td>
+  					</tr>
+  					</table>
+  					<br>
+  					`
+				}
+		document.getElementById('output').innerHTML+=output
+		})
+	}
+</script>
+</body>
+</html>
